@@ -1,0 +1,32 @@
+# Use an official Arch Linux base image
+FROM archlinux:latest
+
+# Install necessary packages for building yay and other dependencies
+RUN pacman -Syu --noconfirm \
+    base-devel \
+    git \
+    wget \
+    go \
+    && pacman -Scc --noconfirm
+
+# Create a user to run the Tor Browser
+RUN useradd -m librewolfuser
+
+# Switch to the new user
+USER librewolfuser
+
+# Install yay
+RUN git clone https://aur.archlinux.org/yay.git /tmp/yay \
+    && cd /tmp/yay \
+    && makepkg -si --noconfirm \
+    && rm -rf /tmp/yay
+
+# Install librewolf-bin using yay
+#RUN yay -S --noconfirm librewolf-bin \
+#    && pacman -Scc --noconfirm
+
+# Set the working directory
+WORKDIR /app
+
+# Command to run LibreWolf
+CMD ["librewolf"]

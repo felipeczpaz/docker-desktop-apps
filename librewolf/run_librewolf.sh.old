@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Check if DISPLAY environment variable is set
+if [ -z "$DISPLAY" ]; then
+    echo "Error: DISPLAY environment variable is not set."
+    exit 1
+fi
+
+# Allow Docker containers to access the X server
+xhost +local:docker
+
+# Run the Docker container
+docker run -it --rm --name librewolf-container \
+    --network host \
+    --env DISPLAY=$DISPLAY \
+    --volume /tmp/.X11-unix:/tmp/.X11-unix \
+    librewolf-bin
